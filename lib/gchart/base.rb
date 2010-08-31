@@ -36,6 +36,9 @@ module GChart
     # Array of +GChart::Axis+ objects.
     attr_accessor :axes
 
+    # A floating point value describing how many radians to rotate the chart clockwise.
+    attr_accessor :rotation
+
     def initialize(options={}, &block)
       @data   = []
       @colors = []
@@ -45,7 +48,7 @@ module GChart
 
       @width = 300
       @height = 200
-  
+
       options.each { |k, v| send("#{k}=", v) }
       yield(self) if block_given?
     end
@@ -126,6 +129,7 @@ module GChart
       render_colors(params)
       render_legend(params)
       render_backgrounds(params)
+      render_rotation(params)
 
       unless @axes.empty?
         if is_a?(GChart::Line) or is_a?(GChart::Bar) or is_a?(GChart::Scatter) # or is_a?(GChart::Radar)
@@ -177,6 +181,10 @@ module GChart
         params["chf"]  = entire_background ? "bg,s,#{GChart.expand_color(entire_background)}" : ""
         params["chf"] += "#{separator}c,s,#{GChart.expand_color(chart_background)}" if chart_background
       end
+    end
+
+    def render_rotation(params) #:nodoc:
+      params["chp"] = rotation if rotation
     end
 
     def render_axes(params) #:nodoc:
